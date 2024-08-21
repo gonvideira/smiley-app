@@ -5,52 +5,52 @@ import ToDoItem from './components/ToDoItem';
 function App() {
   const [items, setItems] = useState([]);
 
+  // Function to fetch To-Do items from the Airtable API
+  const getToDoItems = () => {
+    const baseId = 'appx4tiDiwnMHs5fO';
+    const tableName = 'Daily tasks';
+    const viewName = "Maria Today view";
+    const apiKey = process.env.REACT_APP_AIRTABLE_API_KEY;
+
+    if (!apiKey) {
+      console.error('API key is missing!');
+      return;
+    }
+    
+    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}?view=${encodeURIComponent(viewName)}`;
+    
+    const options = {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + apiKey,
+        'Content-Type': 'application/json'
+      }
+    };
+
+    fetch(url, options)
+      .then(response => response.json())
+      .then(data => {
+        const list = data.records.map(record => ({
+          id: record.id,
+          name: record.fields['Name'],
+          complete: record.fields['Complete'] || false,
+          notApplicable: record.fields['Not applicable'] || false,
+          date: record.fields['Date']
+        }));
+        setItems(list);
+      })
+      .catch(error => console.error('Error fetching to-do items:', error));
+  };
+
   useEffect(() => {
     // Initialize all Materialize components
     M.AutoInit();
 
-    function getToDoItems() {
-      var baseId = 'appx4tiDiwnMHs5fO';
-      var tableName = 'Daily tasks';
-      var viewName = "Maria Today view";
-      var apiKey = 'patsuPhP7B8hzAKdc.1816ca455bc6c596aef2a447b12fcd9c353b2bf35ee7cc3547f3667524675f6a';
-    
-      // Airtable API endpoint
-      var url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}?view=${encodeURIComponent(viewName)}`;
-      console.log(`url: ${url}`);
-    
-      var options = {
-        'method': 'get',
-        'headers': {
-          'Authorization': 'Bearer ' + apiKey,
-          'Content-Type': 'application/json'
-        },
-        'muteHttpExceptions': true
-      };
-    
-      fetch(url, options)
-        .then(response => response.json())
-        .then(data => {
-          const list = data.records.map((record)=>{
-            return {
-              id: record.id,
-              name: record.fields['Name'],
-              complete: record.fields['Complete'] || false,
-              notApplicable: record.fields['Not applicable'] || false,
-              date: record.fields['Date']
-            };
-          });
-          setItems(list);
-          console.log(list)
-        })
-        .catch(error => console.error(error));
-    
-    }
-
+    // Fetch to-do items when component mounts
     getToDoItems();
-
   }, []);
 
+  // Toggle completion status of a to-do item
   const toggleCompletion = (id, isComplete) => {
     setItems(prevItems =>
       prevItems.map(item =>
@@ -59,6 +59,7 @@ function App() {
     );
   };
 
+  // Toggle not applicable status of a to-do item
   const toggleNotApplicable = (id, isNotApplicable) => {
     setItems(prevItems =>
       prevItems.map(item =>
@@ -67,15 +68,61 @@ function App() {
     );
   };
 
+  // Handle form submission with batching
   function handleSubmit() {
     const modal = M.Modal.getInstance(document.getElementById('modal1'));
     modal.open();
 
-    // Simulate form submission
-    setTimeout(() => {
-      modal.close();
-      console.log('Form submitted!');
-    }, 2000);
+    const updatedItems = items.map(item => ({
+      id: item.id,
+      fields: {
+        'Complete': item.complete,
+        'Not applicable': item.notApplicable
+      }
+    }));
+
+    const baseId = 'appx4tiDiwnMHs5fO';
+    const tableName = 'Daily tasks';
+    const apiKey = 'patsuPhP7B8hzAKdc.1816ca455bc6c596aef2a447b12fcd9c353b2bf35ee7cc3547f3667524675f6a';
+    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}`;
+
+    const options = (records) => ({
+      method: 'PATCH',
+      headers: {
+        'Authorization': 'Bearer ' + apiKey,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ records })
+    });
+
+    // Function to send a batch of records
+    const sendBatch = (batch) => {
+      return fetch(url, options(batch))
+        .then(response => response.json())
+        .catch(error => {
+          console.error('Error updating to-do items:', error);
+          throw error;  // Re-throw to ensure the modal closes on error
+        });
+    };
+
+    // Split updatedItems into chunks of 10
+    const batches = [];
+    for (let i = 0; i < updatedItems.length; i += 10) {
+      batches.push(updatedItems.slice(i, i + 10));
+    }
+
+    // Process each batch sequentially
+    batches.reduce((promiseChain, currentBatch) => {
+      return promiseChain.then(() => sendBatch(currentBatch));
+    }, Promise.resolve())
+      .then(() => {
+        console.log('All batches submitted!');
+        modal.close();
+        getToDoItems(); // Re-fetch the updated data from Airtable
+      })
+      .catch(() => {
+        modal.close();
+      });
   }
 
   return (
@@ -85,7 +132,7 @@ function App() {
           <a href="/" className="brand-logo center">Maria's Smiley App</a>
         </div>
       </nav>
-      <h5 class="center">To-Do List for {new Date().toISOString().split('T')[0]}</h5>
+      <h5 className="center">To-Do List for {new Date().toISOString().split('T')[0]}</h5>
       
       <div className="container">
         <table className="striped">
@@ -107,10 +154,6 @@ function App() {
             ))}
           </tbody>
         </table>
-
-      </div>
-
-      <div className="row">
       </div>
       
       <div className="container">
@@ -118,7 +161,6 @@ function App() {
           Atualizar
         </button>
       </div>
-      
 
       {/* Modal */}
       <div id="modal1" className="modal">
