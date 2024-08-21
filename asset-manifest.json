@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/smiley-app/static/css/main.69c568e5.css",
+    "main.js": "/smiley-app/static/js/main.2c4dfcf8.js",
+    "index.html": "/smiley-app/index.html",
+    "main.69c568e5.css.map": "/smiley-app/static/css/main.69c568e5.css.map",
+    "main.2c4dfcf8.js.map": "/smiley-app/static/js/main.2c4dfcf8.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.69c568e5.css",
+    "static/js/main.2c4dfcf8.js"
+  ]
+}
