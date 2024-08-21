@@ -10,7 +10,7 @@ function App() {
     const baseId = 'appx4tiDiwnMHs5fO';
     const tableName = 'Daily tasks';
     const viewName = "Maria Today view";
-    const apiKey = process.env.REACT_APP_AIRTABLE_API_KEY;
+    const apiKey = process.env.REACT_APP_AIRTABLE_API;
 
     if (!apiKey) {
       console.error('API key is missing!');
