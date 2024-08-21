@@ -13,7 +13,7 @@ function App() {
       var baseId = 'appx4tiDiwnMHs5fO';
       var tableName = 'Daily tasks';
       var viewName = "Maria Today view";
-      var apiKey = 'patsuPhP7B8hzAKdc.ec002908afcae642f7f28135b13a9a0952590e440ca8f510b6e2c6a57d861c10';
+      var apiKey = 'patsuPhP7B8hzAKdc.1816ca455bc6c596aef2a447b12fcd9c353b2bf35ee7cc3547f3667524675f6a';
     
       // Airtable API endpoint
       var url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}?view=${encodeURIComponent(viewName)}`;
@@ -28,44 +28,27 @@ function App() {
         'muteHttpExceptions': true
       };
     
-      var response = UrlFetchApp.fetch(url, options);
-      var responseCode = response.getResponseCode();
-      
-      if (responseCode !== 200) {
-        Logger.log('Error fetching data from Airtable: ' + response.getContentText());
-        throw new Error('Failed to fetch data from Airtable. Response code: ' + responseCode);
-      }
+      fetch(url, options)
+        .then(response => response.json())
+        .then(data => {
+          const list = data.records.map((record)=>{
+            return {
+              id: record.id,
+              name: record.fields['Name'],
+              complete: record.fields['Complete'] || false,
+              notApplicable: record.fields['Not applicable'] || false,
+              date: record.fields['Date']
+            };
+          });
+          setItems(list);
+          console.log(list)
+        })
+        .catch(error => console.error(error));
     
-      var data = JSON.parse(response.getContentText());
-    
-      // Check if data.records exists before proceeding
-      if (!data.records) {
-        Logger.log('No records found in the response: ' + JSON.stringify(data));
-        throw new Error('No records found in the response');
-      }
-    
-      var todoItems = data.records.map(function(record) {
-        return {
-          id: record.id,
-          name: record.fields['Name'],
-          complete: record.fields['Complete'] || false,
-          notApplicable: record.fields['Not applicable'] || false
-        };
-      });
-    
-      console.log(todoItems);
-      return todoItems;
     }
 
-    // Simulate fetching data from a server
-    //const fetchedItems = [
-    //  { id: 1, name: "Task 1", complete: false, notApplicable: false },
-    //  { id: 2, name: "Task 2", complete: true, notApplicable: false },
-      // Add more items as needed
-    //];
+    getToDoItems();
 
-    const fetchedItems = getToDoItems();
-    setItems(fetchedItems);
   }, []);
 
   const toggleCompletion = (id, isComplete) => {
@@ -102,30 +85,40 @@ function App() {
           <a href="/" className="brand-logo center">Maria's Smiley App</a>
         </div>
       </nav>
-      <h3>To-Do List for {new Date().toISOString().split('T')[0]}</h3>
-      <table className="responsive-table">
-        <thead>
-          <tr>
-            <th>Complete</th>
-            <th>N/A</th>
-            <th>Task</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map(item => (
-            <ToDoItem
-              key={item.id}
-              {...item}
-              toggleCompletion={toggleCompletion}
-              toggleNotApplicable={toggleNotApplicable}
-            />
-          ))}
-        </tbody>
-      </table>
+      <h5 class="center">To-Do List for {new Date().toISOString().split('T')[0]}</h5>
+      
+      <div className="container">
+        <table className="striped">
+          <thead>
+            <tr>
+              <th>OK</th>
+              <th>N/A</th>
+              <th>Tarefa</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map(item => (
+              <ToDoItem
+                key={item.id}
+                {...item}
+                toggleCompletion={toggleCompletion}
+                toggleNotApplicable={toggleNotApplicable}
+              />
+            ))}
+          </tbody>
+        </table>
 
-      <button className="btn waves-effect waves-light" onClick={handleSubmit}>
-        Submit
-      </button>
+      </div>
+
+      <div className="row">
+      </div>
+      
+      <div className="container">
+        <button className="btn waves-effect waves-light" onClick={handleSubmit}>
+          Atualizar
+        </button>
+      </div>
+      
 
       {/* Modal */}
       <div id="modal1" className="modal">
