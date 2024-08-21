@@ -83,7 +83,7 @@ function App() {
 
     const baseId = 'appx4tiDiwnMHs5fO';
     const tableName = 'Daily tasks';
-    const apiKey = 'patsuPhP7B8hzAKdc.1816ca455bc6c596aef2a447b12fcd9c353b2bf35ee7cc3547f3667524675f6a';
+    const apiKey = process.env.REACT_APP_AIRTABLE_API;
     const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}`;
 
     const options = (records) => ({
