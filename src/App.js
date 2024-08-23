@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import M from 'materialize-css/dist/js/materialize.min.js';
 import ToDoItem from './components/ToDoItem';
+import Navbar from './components/Navbar';
 
 function App() {
   const [items, setItems] = useState([]);
@@ -127,11 +128,9 @@ function App() {
 
   return (
     <div className="container">
-      <nav>
-        <div className="nav-wrapper">
-          <a href="/" className="brand-logo center">Maria's Smiley App</a>
-        </div>
-      </nav>
+      
+      <Navbar />
+
       <h5 className="center">To-Do List for {new Date().toISOString().split('T')[0]}</h5>
       
       <div className="container">
