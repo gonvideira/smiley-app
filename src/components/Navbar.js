@@ -4,9 +4,7 @@ function Navbar() {
   return (
     <nav>
       <div className="nav-wrapper">
-        <ul id="nav-mobile" className="center hide-on-med-and-down">
-          <li>Maria's Smiley App</li>
-        </ul>
+        <a href="/" class="brand-logo center truncate">Maria's Smiley</a>
       </div>
     </nav>
   );

@@ -17,6 +17,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Configure Git for commit
+        run: |
+          git config --global user.name "Goncalo's Actions Bot"
+          git config --global user.email "goncalvideira@hotmail.com"
+
       - name: Deploy
         run: npm run deploy
         env:

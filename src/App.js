@@ -155,7 +155,7 @@ function App() {
           </tbody>
         </table>
       </div>
-      
+      <div className="row"></div>
       <div className="container">
         <button className="btn waves-effect waves-light" onClick={handleSubmit}>
           Atualizar
