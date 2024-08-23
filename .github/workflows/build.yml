@@ -1,4 +1,4 @@
-name: deploy
+name: build and deploy
 
 on:
   push:
@@ -6,23 +6,30 @@ on:
       - main
   workflow_dispatch:
 
-
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
+      # Step 1: Checkout the code with full history and correct credentials
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Fetch all history for all branches and tags
 
+      # Step 2: Install dependencies
       - name: Install dependencies
         run: npm install
 
+      # Step 3: Configure Git for commit (before deploy)
       - name: Configure Git for commit
         run: |
           git config --global user.name "Goncalo's Actions Bot"
           git config --global user.email "goncalvideira@hotmail.com"
 
+      # Step 4: Deploy the application with authenticated push
       - name: Deploy
         run: npm run deploy
         env:
           REACT_APP_AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Inject the GitHub token for authenticated push
