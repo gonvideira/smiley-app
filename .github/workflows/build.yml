@@ -15,17 +15,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Install dependencies
+      # Step 2: Setup node
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      
+      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Step 3: Configure Git for commit (before deploy)
+      # Step 4: Configure Git for commit (before deploy)
       - name: Configure Git for commit
         run: |
           git config --global user.name "Goncalo's Actions Bot"
           git config --global user.email "goncalvideira@hotmail.com"
 
-      # Step 4: Deploy the application with authenticated push
+      # Step 5: Deploy the application with authenticated push
       - name: Deploy
         run: |
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
