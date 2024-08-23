@@ -37,4 +37,4 @@ jobs:
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           npm run deploy
         env:
-          REACT_APP_AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY }}
+          REACT_APP_AIRTABLE_API: ${{ secrets.AIRTABLE_API }}
