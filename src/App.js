@@ -49,7 +49,10 @@ function App() {
     M.AutoInit();
 
     // Fetch to-do items when component mounts
+    const modal = M.Modal.getInstance(document.getElementById('modal1'));
+    modal.open();
     getToDoItems();
+    modal.close();
   }, []);
 
   // Toggle completion status of a to-do item
