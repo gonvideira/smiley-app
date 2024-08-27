@@ -17,9 +17,9 @@ function App() {
       console.error('API key is missing!');
       return;
     }
-    
+
     const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}?view=${encodeURIComponent(viewName)}`;
-    
+
     const options = {
       method: 'GET',
       headers: {
@@ -44,6 +44,7 @@ function App() {
   };
 
   useEffect(() => {
+
     // Initialize all Materialize components
     M.AutoInit();
 
@@ -127,38 +128,41 @@ function App() {
   }
 
   return (
-    <div className="container">
-      
+    <div>
+
       <Navbar />
 
-      <h5 className="center">To-Do List for {new Date().toISOString().split('T')[0]}</h5>
-      
       <div className="container">
-        <table className="striped">
-          <thead>
-            <tr>
-              <th>OK</th>
-              <th>N/A</th>
-              <th>Tarefa</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map(item => (
-              <ToDoItem
-                key={item.id}
-                {...item}
-                toggleCompletion={toggleCompletion}
-                toggleNotApplicable={toggleNotApplicable}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="row"></div>
-      <div className="container">
-        <button className="btn waves-effect waves-light" onClick={handleSubmit}>
-          Atualizar
-        </button>
+
+        <h5 className="center">To-Do List for {new Date().toISOString().split('T')[0]}</h5>
+
+        <div className="container">
+          <table className="striped">
+            <thead>
+              <tr>
+                <th>OK</th>
+                <th>N/A</th>
+                <th>Tarefa</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map(item => (
+                <ToDoItem
+                  key={item.id}
+                  {...item}
+                  toggleCompletion={toggleCompletion}
+                  toggleNotApplicable={toggleNotApplicable}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="row"></div>
+        <div className="container">
+          <button className="btn waves-effect waves-light" onClick={handleSubmit}>
+            Atualizar
+          </button>
+        </div>
       </div>
 
       {/* Modal */}

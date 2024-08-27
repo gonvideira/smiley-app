@@ -4,7 +4,7 @@ function Navbar() {
   return (
     <nav>
       <div className="nav-wrapper">
-        <a href="/" class="brand-logo center truncate">Maria's Smiley</a>
+        <a href="#" class="brand-logo center truncate">Maria's Smiley</a>
       </div>
     </nav>
   );
