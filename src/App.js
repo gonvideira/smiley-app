@@ -1,10 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import M from 'materialize-css/dist/js/materialize.min.js';
-import ToDoItem from './components/ToDoItem';
+import ToDoTable from './components/ToDoTable';
 import Navbar from './components/Navbar';
+import Modal from './components/Modal';
+import Footer from './components/Footer';
 
 function App() {
   const [items, setItems] = useState([]);
+
+  // Function to open the modal
+  const openModal = () => {
+    const modal = M.Modal.getInstance(document.getElementById('modal1'));
+    modal.open();
+  };
+
+  // Function to close the modal
+  const closeModal = () => {
+    const modal = M.Modal.getInstance(document.getElementById('modal1'));
+    if (modal) {
+      modal.close();
+      console.log('Modal closed');
+      document.body.style.overflow = 'auto'; // Ensure scrolling is restored
+    }
+  };
 
   // Function to fetch To-Do items from the Airtable API
   const getToDoItems = () => {
@@ -15,6 +33,7 @@ function App() {
 
     if (!apiKey) {
       console.error('API key is missing!');
+      closeModal(); // close Modal if no API KEY
       return;
     }
 
@@ -28,7 +47,7 @@ function App() {
       }
     };
 
-    fetch(url, options)
+    return fetch(url, options)
       .then(response => response.json())
       .then(data => {
         const list = data.records.map(record => ({
@@ -40,19 +59,17 @@ function App() {
         }));
         setItems(list);
       })
-      .catch(error => console.error('Error fetching to-do items:', error));
+      .catch(error => console.error('Error fetching to-do items:', error))
   };
 
   useEffect(() => {
-
-    // Initialize all Materialize components
-    M.AutoInit();
-
-    // Fetch to-do items when component mounts
-    const modal = M.Modal.getInstance(document.getElementById('modal1'));
-    modal.open();
-    getToDoItems();
-    modal.close();
+    const elem = document.getElementById('modal1');
+    const options = {
+      'dismissible': false
+    };
+    M.Modal.init(elem, options);
+    openModal(); // Open the modal before fetching data
+    getToDoItems().finally(() => closeModal()); // Fetch to-do items when component mounts and close Modal when it finishes
   }, []);
 
   // Toggle completion status of a to-do item
@@ -75,8 +92,7 @@ function App() {
 
   // Handle form submission with batching
   function handleSubmit() {
-    const modal = M.Modal.getInstance(document.getElementById('modal1'));
-    modal.open();
+    openModal(); // Open Modal before submiting data
 
     const updatedItems = items.map(item => ({
       id: item.id,
@@ -122,43 +138,24 @@ function App() {
     }, Promise.resolve())
       .then(() => {
         console.log('All batches submitted!');
-        modal.close();
-        getToDoItems(); // Re-fetch the updated data from Airtable
+        return getToDoItems(); // Re-fetch the updated data from Airtable
       })
-      .catch(() => {
-        modal.close();
-      });
+      .catch(() => { })
+      .finally(() => closeModal()); // Close the modal after submission and re-fetching;
   }
 
   return (
     <div>
-
       <Navbar />
-
       <div className="container">
-
         <h5 className="center">To-Do List for {new Date().toISOString().split('T')[0]}</h5>
-
+        
         <div className="container">
-          <table className="striped">
-            <thead>
-              <tr>
-                <th>OK</th>
-                <th>N/A</th>
-                <th>Tarefa</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map(item => (
-                <ToDoItem
-                  key={item.id}
-                  {...item}
-                  toggleCompletion={toggleCompletion}
-                  toggleNotApplicable={toggleNotApplicable}
-                />
-              ))}
-            </tbody>
-          </table>
+          <ToDoTable 
+              items={items} 
+              toggleCompletion={toggleCompletion} 
+              toggleNotApplicable={toggleNotApplicable} 
+            />
         </div>
         <div className="row"></div>
         <div className="container">
@@ -166,27 +163,13 @@ function App() {
             Atualizar
           </button>
         </div>
+        <div className="row"></div>
       </div>
 
-      {/* Modal */}
-      <div id="modal1" className="modal">
-        <div className="modal-content">
-          <h4>Working on it...</h4>
-          <div className="preloader-wrapper big active">
-            <div className="spinner-layer spinner-blue-only">
-              <div className="circle-clipper left">
-                <div className="circle"></div>
-              </div>
-              <div className="gap-patch">
-                <div className="circle"></div>
-              </div>
-              <div className="circle-clipper right">
-                <div className="circle"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Footer />
+
+      <Modal />
+
     </div>
   );
 }
