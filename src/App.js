@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import M from 'materialize-css/dist/js/materialize.min.js';
 import ToDoTable from './components/ToDoTable';
 import Navbar from './components/Navbar';
@@ -15,17 +15,17 @@ function App() {
   };
 
   // Function to close the modal
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     const modal = M.Modal.getInstance(document.getElementById('modal1'));
     if (modal) {
       modal.close();
       console.log('Modal closed');
       document.body.style.overflow = 'auto'; // Ensure scrolling is restored
     }
-  };
+  }, []);
 
   // Function to fetch To-Do items from the Airtable API
-  const getToDoItems = () => {
+  const getToDoItems = useCallback(() => {
     const baseId = 'appx4tiDiwnMHs5fO';
     const tableName = 'Daily tasks';
     const viewName = "Maria Today view";
@@ -60,7 +60,7 @@ function App() {
         setItems(list);
       })
       .catch(error => console.error('Error fetching to-do items:', error))
-  };
+  }, [closeModal]);
 
   useEffect(() => {
     const elem = document.getElementById('modal1');
@@ -70,7 +70,7 @@ function App() {
     M.Modal.init(elem, options);
     openModal(); // Open the modal before fetching data
     getToDoItems().finally(() => closeModal()); // Fetch to-do items when component mounts and close Modal when it finishes
-  }, []);
+  }, [getToDoItems, closeModal]);
 
   // Toggle completion status of a to-do item
   const toggleCompletion = (id, isComplete) => {

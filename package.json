@@ -40,6 +40,7 @@
     ]
   },
   "devDependencies": {
+    "@types/materialize-css": "^1.0.14",
     "gh-pages": "^6.1.1"
   }
 }
