@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import M from 'materialize-css/dist/js/materialize.min.js';
 import ToDoItem from './ToDoItem';
+import Dashboard from './Dashboard';
 
 const ToDoTable = () => {
 
@@ -28,7 +29,7 @@ const ToDoTable = () => {
 
   // Function to fetch To-Do items from the Airtable API
   const getToDoItems = useCallback(() => {
-    const baseId = 'appx4tiDiwnMHs5fO';
+    const baseId = process.env.REACT_APP_BASE_ID;
     const tableName = 'Daily tasks';
     const viewName = "Maria Today view";
     const apiKey = process.env.REACT_APP_AIRTABLE_API;
@@ -116,7 +117,7 @@ const ToDoTable = () => {
       }
     }));
 
-    const baseId = 'appx4tiDiwnMHs5fO';
+    const baseId = process.env.REACT_APP_BASE_ID;
     const tableName = 'Daily tasks';
     const apiKey = process.env.REACT_APP_AIRTABLE_API;
     const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}`;
@@ -160,6 +161,7 @@ const ToDoTable = () => {
 
   return (
     <div>
+      <Dashboard />
       {empty ? (
         // Show "CONGRATS" message when there are no items
         <div className="center-align section">
@@ -168,7 +170,7 @@ const ToDoTable = () => {
         </div>
       ) : (
         <div>
-          <h5 className="center">To-Do List for {new Date().toISOString().split('T')[0]}</h5>
+          <h5 className="center">ℹ️ tarefas para {new Date().toISOString().split('T')[0]} ℹ️</h5>
           <table className="striped">
             <thead>
               <tr>
@@ -188,7 +190,7 @@ const ToDoTable = () => {
               ))}
             </tbody>
           </table>
-          <div className="row">
+          <div className="section">
             <button className="btn waves-effect waves-light section" onClick={handleSubmit}>
               Atualizar
             </button>
