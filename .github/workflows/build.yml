@@ -38,3 +38,4 @@ jobs:
           npm run deploy
         env:
           REACT_APP_AIRTABLE_API: ${{ secrets.AIRTABLE_API }}
+          REACT_APP_SECRET_PASSWORD: ${{ secrets.SECRET_PASSWORD }}

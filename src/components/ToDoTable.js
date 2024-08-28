@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import M from 'materialize-css/dist/js/materialize.min.js';
 import ToDoItem from './ToDoItem';
 
 const ToDoTable = () => {
 
   const [items, setItems] = useState([]);
-
+  const navigate = useNavigate();
+  
   // Function to open the modal
   const openModal = () => {
     const modal = M.Modal.getInstance(document.getElementById('modal1'));
@@ -69,6 +71,14 @@ const ToDoTable = () => {
     openModal(); // Open the modal before fetching data
     getToDoItems().finally(() => closeModal()); // Fetch to-do items when component mounts and close Modal when it finishes
   }, [getToDoItems, closeModal]);
+
+  useEffect(() => {
+    // Check if the user is authenticated
+    const isAuthenticated = localStorage.getItem('isAuthenticated');
+    if (!isAuthenticated) {
+      navigate('/');  // Redirect to the Home page if not authenticated
+    }
+  }, [navigate]);
 
   // Toggle completion status of a to-do item
   const toggleCompletion = (id, isComplete) => {
