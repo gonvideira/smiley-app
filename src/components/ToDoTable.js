@@ -170,7 +170,7 @@ const ToDoTable = () => {
         </div>
       ) : (
         <div>
-          <h5 className="center">ℹ️ tarefas para {new Date().toISOString().split('T')[0]} ℹ️</h5>
+          <h5 className="center">🚧 tarefas para {new Date().toISOString().split('T')[0]} 🚧</h5>
           <table className="striped">
             <thead>
               <tr>

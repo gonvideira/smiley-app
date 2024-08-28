@@ -21,9 +21,8 @@ const Home = () => {
   return (
     <div className='container center section'>
       <h5 className="center">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor officiis id, 
-        ipsum doloribus distinctio sunt ducimus cumque nesciunt ullam aut. 
-        Veniam corrupti ab saepe expedita eos quos, incidunt fuga tempore?
+        Olá! Bem vindos à app das tarefas da Maria, 
+        para entrar é preciso uma password! 
       </h5>
       
       <div className="row">
