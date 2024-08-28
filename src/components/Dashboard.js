@@ -44,8 +44,16 @@ const Dashboard = () => {
   }, [getPreviousDayPoints]);
 
   return (
-    <div className="center-align section">
-      <h5>ℹ️ a tua pontuação ontem foi {points} ℹ️</h5>
+    <div class="container center">
+      <div class="col s12 m5">
+        <div class="card-panel teal">
+          <span class="white-text"><h5>Olá Maria!</h5></span>
+          <div className="divider" />
+          <span class="white-text">
+            <h6>ℹ️ a tua pontuação ontem foi {points} pontos ℹ️</h6>
+          </span>
+        </div>
+      </div>
     </div>
   );
 };
