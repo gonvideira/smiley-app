@@ -13,3 +13,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.strikethrough {
+  text-decoration: line-through;
+  color: gray; /* Optional: to change the color when strikethrough is applied */
+}

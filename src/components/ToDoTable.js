@@ -6,8 +6,10 @@ import ToDoItem from './ToDoItem';
 const ToDoTable = () => {
 
   const [items, setItems] = useState([]);
+  const [empty,setEmpty] = useState(false); // to control whether there are tasks
+
   const navigate = useNavigate();
-  
+
   // Function to open the modal
   const openModal = () => {
     const modal = M.Modal.getInstance(document.getElementById('modal1'));
@@ -69,8 +71,12 @@ const ToDoTable = () => {
     };
     M.Modal.init(elem, options);
     openModal(); // Open the modal before fetching data
-    getToDoItems().finally(() => closeModal()); // Fetch to-do items when component mounts and close Modal when it finishes
-  }, [getToDoItems, closeModal]);
+    getToDoItems().finally(() => {
+      closeModal();
+      console.log(items.length)
+    }); // Fetch to-do items when component mounts and close Modal when it finishes
+    setEmpty(items.length === 0); // Set empty state based on the fetched items
+  }, [getToDoItems, closeModal, items.length]);
 
   useEffect(() => {
     // Check if the user is authenticated
@@ -154,35 +160,41 @@ const ToDoTable = () => {
 
   return (
     <div>
-      <h5 className="center">To-Do List for {new Date().toISOString().split('T')[0]}</h5>
-      <table className="striped">
-        <thead>
-          <tr>
-            <th>OK</th>
-            <th>N/A</th>
-            <th>Tarefa</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map(item => (
-            <ToDoItem
-              key={item.id}
-              {...item}
-              toggleCompletion={toggleCompletion}
-              toggleNotApplicable={toggleNotApplicable}
-            />
-          ))}
-        </tbody>
-      </table>
-
-      <div className="row"></div>
-
-      <button className="btn waves-effect waves-light" onClick={handleSubmit}>
-        Atualizar
-      </button>
-
-      <div className="row"></div>
-
+      {empty ? (
+        // Show "CONGRATS" message when there are no items
+        <div className="center-align section">
+          <h5>PARABÉNS</h5>
+          <p>Já acabaste as tarefas todas de hoje!!</p>
+        </div>
+      ) : (
+        <div>
+          <h5 className="center">To-Do List for {new Date().toISOString().split('T')[0]}</h5>
+          <table className="striped">
+            <thead>
+              <tr>
+                <th>OK</th>
+                <th>N/A</th>
+                <th>Tarefa</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <ToDoItem
+                  key={item.id}
+                  {...item}
+                  toggleCompletion={toggleCompletion}
+                  toggleNotApplicable={toggleNotApplicable}
+                />
+              ))}
+            </tbody>
+          </table>
+          <div className="row">
+            <button className="btn waves-effect waves-light section" onClick={handleSubmit}>
+              Atualizar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
