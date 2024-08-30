@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
 
 const Dashboard = () => {
-  const [points, setPoints] = useState(0);
+  const [previousDayPoints, setPreviousDayPoints] = useState(0);
+  const [totalPoints, setTotalPoints] = useState(0);
+  const baseId = process.env.REACT_APP_BASE_ID;
+  const apiKey = process.env.REACT_APP_AIRTABLE_API;
 
-  const getPreviousDayPoints = useCallback(() => {
-    const baseId = process.env.REACT_APP_BASE_ID;
+  const getPreviousDayPoints = useCallback((baseId, apiKey) => {
     const tableName = 'Daily tasks';
     const viewName = "Grid view";
-    const apiKey = process.env.REACT_APP_AIRTABLE_API;
 
     if (!apiKey) {
       console.error('API key is missing!');
@@ -28,30 +29,71 @@ const Dashboard = () => {
     fetch(url, options)
       .then(response => response.json())
       .then(data => {
-        console.log('Fetched data:', data);
-        const totalPoints = data.records.reduce((sum, record) => 
+        const totalPoints = data.records.reduce((sum, record) =>
           sum + (record.fields['Points net'] || 0), 0
         );
 
-        setPoints(totalPoints);
+        setPreviousDayPoints(totalPoints);
+      })
+      .catch(error => console.error('Error fetching points:', error));
+  }, []);
+
+  const getTotalPoints = useCallback((baseId, apiKey) => {
+    const tableName = 'Members';
+
+    if (!apiKey) {
+      console.error('API key is missing!');
+      return;
+    }
+
+    // const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}?view=${encodeURIComponent(viewName)}`;
+    const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}/recySVLTrN1isEdbE`;
+
+    const options = {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + apiKey,
+        'Content-Type': 'application/json'
+      }
+    };
+
+    fetch(url, options)
+      .then(response => response.json())
+      .then(data => {
+        const totalPoints = data.fields['Total Points net'];
+
+        setTotalPoints(totalPoints);
       })
       .catch(error => console.error('Error fetching points:', error));
   }, []);
 
   useEffect(() => {
-    console.log('Fetching points for the previous day');
-    getPreviousDayPoints();
-  }, [getPreviousDayPoints]);
+    getPreviousDayPoints(baseId, apiKey);
+    getTotalPoints(baseId, apiKey);
+  }, [getPreviousDayPoints, getTotalPoints, baseId, apiKey]);
 
   return (
-    <div class="container center">
-      <div class="col s12 m5">
-        <div class="card-panel teal">
-          <span class="white-text"><h5>Olá Maria!</h5></span>
+    <div className="container center">
+      <div className="col s12 m6 l2">
+        <div className="card-panel teal">
+          <div className="row section">
+            <span className="white-text"><h4>Olá<br/>Maria!</h4></span>
+          </div>
           <div className="divider" />
-          <span class="white-text">
-            <h6>ℹ️ a tua pontuação ontem foi {points} pontos ℹ️</h6>
-          </span>
+          <div className="row section">
+            <div className="col s12 m6">
+              <span className="white-text">
+                <i className="medium material-icons">account_balance_wallet</i>
+                <h6>ℹ️ a tua pontuação ontem foi {previousDayPoints} pontos ℹ️</h6>
+              </span>
+            </div>
+            <div className="col s12 m6">
+              <span className="white-text">
+                <i className="medium material-icons">account_balance</i>
+                <h6>ℹ️ a tua pontuação total é de {totalPoints} pontos ℹ️</h6>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

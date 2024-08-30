@@ -3,7 +3,7 @@
   "name": "Smiley App",
   "icons": [
     {
-      "src": "icons8-to-do-ios-17-filled-96.ico",
+      "src": "task_alt_24dp_FF8A80.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     }

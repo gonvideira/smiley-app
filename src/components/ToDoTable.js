@@ -4,35 +4,31 @@ import M from 'materialize-css/dist/js/materialize.min.js';
 import ToDoItem from './ToDoItem';
 import Dashboard from './Dashboard';
 
+
 const ToDoTable = () => {
 
+  const baseId = process.env.REACT_APP_BASE_ID;
+  const tableName = 'Daily tasks';
+  const apiKey = process.env.REACT_APP_AIRTABLE_API;
   const [items, setItems] = useState([]);
   const [empty,setEmpty] = useState(false); // to control whether there are tasks
 
   const navigate = useNavigate();
 
-  // Function to open the modal
-  const openModal = () => {
+  const openModal = () => { // Function to open the modal
     const modal = M.Modal.getInstance(document.getElementById('modal1'));
     modal.open();
   };
 
-  // Function to close the modal
-  const closeModal = useCallback(() => {
+  const closeModal = useCallback(() => { // Function to close the modal
     const modal = M.Modal.getInstance(document.getElementById('modal1'));
     if (modal) {
       modal.close();
-      console.log('Modal closed');
       document.body.style.overflow = 'auto'; // Ensure scrolling is restored
     }
   }, []);
 
-  // Function to fetch To-Do items from the Airtable API
-  const getToDoItems = useCallback(() => {
-    const baseId = process.env.REACT_APP_BASE_ID;
-    const tableName = 'Daily tasks';
-    const viewName = "Maria Today view";
-    const apiKey = process.env.REACT_APP_AIRTABLE_API;
+  const getToDoItems = useCallback((baseId,tableName,apiKey) => { // Function to fetch To-Do items from the Airtable API
 
     if (!apiKey) {
       console.error('API key is missing!');
@@ -40,6 +36,7 @@ const ToDoTable = () => {
       return;
     }
 
+    const viewName = "Maria Today view";
     const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}?view=${encodeURIComponent(viewName)}`;
 
     const options = {
@@ -65,30 +62,27 @@ const ToDoTable = () => {
       .catch(error => console.error('Error fetching to-do items:', error))
   }, [closeModal]);
 
-  useEffect(() => {
+  useEffect(() => { // Fetch data when page is loaded
     const elem = document.getElementById('modal1');
     const options = {
       'dismissible': false
     };
     M.Modal.init(elem, options);
     openModal(); // Open the modal before fetching data
-    getToDoItems().finally(() => {
+    getToDoItems(baseId,tableName,apiKey).finally(() => {
       closeModal();
-      console.log(items.length)
     }); // Fetch to-do items when component mounts and close Modal when it finishes
     setEmpty(items.length === 0); // Set empty state based on the fetched items
-  }, [getToDoItems, closeModal, items.length]);
+  }, [getToDoItems, closeModal, items.length, apiKey, baseId]);
 
-  useEffect(() => {
-    // Check if the user is authenticated
+  useEffect(() => { // Check if the user is authenticated and redirect if not
     const isAuthenticated = localStorage.getItem('isAuthenticated');
     if (!isAuthenticated) {
-      navigate('/');  // Redirect to the Home page if not authenticated
+      navigate('/');
     }
   }, [navigate]);
 
-  // Toggle completion status of a to-do item
-  const toggleCompletion = (id, isComplete) => {
+  const toggleCompletion = (id, isComplete) => { // Toggle completion status of a to-do item
     setItems(prevItems =>
       prevItems.map(item =>
         item.id === id ? { ...item, complete: isComplete, notApplicable: !isComplete ? item.notApplicable : false } : item
@@ -96,8 +90,7 @@ const ToDoTable = () => {
     );
   };
 
-  // Toggle not applicable status of a to-do item
-  const toggleNotApplicable = (id, isNotApplicable) => {
+  const toggleNotApplicable = (id, isNotApplicable) => { // Toggle not applicable status of a to-do item
     setItems(prevItems =>
       prevItems.map(item =>
         item.id === id ? { ...item, notApplicable: isNotApplicable, complete: !isNotApplicable ? item.complete : false } : item
@@ -105,8 +98,7 @@ const ToDoTable = () => {
     );
   };
 
-  // Handle form submission with batching
-  function handleSubmit() {
+  function handleSubmit(baseId, tableName, apiKey) { // Handle form submission with batching
     openModal(); // Open Modal before submiting data
 
     const updatedItems = items.map(item => ({
@@ -117,9 +109,6 @@ const ToDoTable = () => {
       }
     }));
 
-    const baseId = process.env.REACT_APP_BASE_ID;
-    const tableName = 'Daily tasks';
-    const apiKey = process.env.REACT_APP_AIRTABLE_API;
     const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}`;
 
     const options = (records) => ({
@@ -152,7 +141,6 @@ const ToDoTable = () => {
       return promiseChain.then(() => sendBatch(currentBatch));
     }, Promise.resolve())
       .then(() => {
-        console.log('All batches submitted!');
         return getToDoItems(); // Re-fetch the updated data from Airtable
       })
       .catch(() => { })
