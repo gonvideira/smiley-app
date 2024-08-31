@@ -28,8 +28,7 @@ const ToDoTable = () => {
     }
   }, []);
 
-  const getToDoItems = useCallback((baseId,tableName,apiKey) => { // Function to fetch To-Do items from the Airtable API
-
+  const getToDoItems = useCallback(() => { // Function to fetch To-Do items from the Airtable API
     if (!apiKey) {
       console.error('API key is missing!');
       closeModal(); // close Modal if no API KEY
@@ -60,7 +59,7 @@ const ToDoTable = () => {
         setItems(list);
       })
       .catch(error => console.error('Error fetching to-do items:', error))
-  }, [closeModal]);
+  }, [closeModal, apiKey, baseId]);
 
   useEffect(() => { // Fetch data when page is loaded
     const elem = document.getElementById('modal1');
@@ -69,7 +68,7 @@ const ToDoTable = () => {
     };
     M.Modal.init(elem, options);
     openModal(); // Open the modal before fetching data
-    getToDoItems(baseId,tableName,apiKey).finally(() => {
+    getToDoItems().finally(() => {
       closeModal();
     }); // Fetch to-do items when component mounts and close Modal when it finishes
     setEmpty(items.length === 0); // Set empty state based on the fetched items
@@ -98,7 +97,7 @@ const ToDoTable = () => {
     );
   };
 
-  function handleSubmit(baseId, tableName, apiKey) { // Handle form submission with batching
+  function handleSubmit() { // Handle form submission with batching
     openModal(); // Open Modal before submiting data
 
     const updatedItems = items.map(item => ({
