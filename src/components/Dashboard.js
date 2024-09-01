@@ -76,21 +76,21 @@ const Dashboard = () => {
     <div className="container center">
       <div className="col s12 m6 l2">
         <div className="card-panel teal">
-          <div className="row section">
-            <span className="white-text"><h4>Olá<br/>Maria!</h4></span>
+          <div className="row">
+            <span className="white-text"><h5>Olá<br/>Maria!</h5></span>
           </div>
           <div className="divider" />
           <div className="row section">
             <div className="col s12 m6">
               <span className="white-text">
                 <i className="medium material-icons">account_balance_wallet</i>
-                <h6>ℹ️ a tua pontuação ontem foi {previousDayPoints} pontos ℹ️</h6>
+                <h6>ONTEM: {previousDayPoints} pontos</h6>
               </span>
             </div>
             <div className="col s12 m6">
               <span className="white-text">
                 <i className="medium material-icons">account_balance</i>
-                <h6>ℹ️ a tua pontuação total é de {totalPoints} pontos ℹ️</h6>
+                <h6>TOTAL: {totalPoints} pontos</h6>
               </span>
             </div>
           </div>
