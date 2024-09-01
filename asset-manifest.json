@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/smiley-app/static/css/main.4909f8f6.css",
-    "main.js": "/smiley-app/static/js/main.04fffcda.js",
+    "main.js": "/smiley-app/static/js/main.eee1f57f.js",
     "index.html": "/smiley-app/index.html",
     "main.4909f8f6.css.map": "/smiley-app/static/css/main.4909f8f6.css.map",
-    "main.04fffcda.js.map": "/smiley-app/static/js/main.04fffcda.js.map"
+    "main.eee1f57f.js.map": "/smiley-app/static/js/main.eee1f57f.js.map"
   },
   "entrypoints": [
     "static/css/main.4909f8f6.css",
-    "static/js/main.04fffcda.js"
+    "static/js/main.eee1f57f.js"
   ]
 }
