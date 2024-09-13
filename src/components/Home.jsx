@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PrizeList from './PrizeList';
 
 const Home = () => {
   const [password, setPassword] = useState('');
@@ -24,7 +25,7 @@ const Home = () => {
         Olá! Bem vindos à app das tarefas da Maria, 
         para entrar é preciso uma password! 
       </h5>
-      
+
       <div className="row">
         <form className="col s12" onSubmit={handleLogin}>
           <div className="row">
@@ -44,6 +45,11 @@ const Home = () => {
           </button>
         </form>
       </div>
+
+      <div className="row">
+        <PrizeList />
+      </div>
+
     </div>
   );
 };
